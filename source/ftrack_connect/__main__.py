@@ -8,8 +8,12 @@ import signal
 import os
 import pkg_resources
 
-bindings = ['PySide', 'PySide2']
+#---------------------------------------------------------------------------#
+# Alter bindings to load PySide2 for houdini
+# bindings = ['PySide', 'PySide2']
+bindings = ['PySide2', 'PySide']
 os.environ.setdefault('QT_PREFERRED_BINDING', os.pathsep.join(bindings))
+#---------------------------------------------------------------------------#
 
 from QtExt import QtWidgets, QtCore
 

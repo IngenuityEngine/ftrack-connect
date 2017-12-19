@@ -32,6 +32,19 @@ class FtrackImportAssetDialog(QtWidgets.QDialog):
 
         super(FtrackImportAssetDialog, self).__init__(parent=parent)
         applyTheme(self, 'integration')
+
+#---------------------------------------------------------------------------#
+        # Add for proper hou colors
+        try:
+            import hou
+            self.stylesheet = '%s; background-color: #3a3a3a; color: #FFFFFF;' % hou.qt.styleSheet()
+            self.setStyleSheet(self.stylesheet)
+        except:
+            pass
+#---------------------------------------------------------------------------#
+
+
+
         self.connector = connector
         self.currentEntity = ftrack.Task(
             os.getenv('FTRACK_TASKID',

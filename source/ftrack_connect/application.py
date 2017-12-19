@@ -63,6 +63,16 @@ class ApplicationStore(object):
             __name__ + '.' + self.__class__.__name__
         )
 
+#-----------------------------------------------
+        # our custom ftrack wrapper
+        if not hasattr(self, 'arkFt'):
+            try:
+                from arkFTrack import arkFt
+                self.arkFt = arkFt.ArkFt()
+            except:
+                pass
+#-----------------------------------------------
+
         # Discover applications and store.
         self.applications = self._discoverApplications()
 
@@ -123,7 +133,7 @@ class ApplicationStore(object):
 
     def _searchFilesystem(self, expression, label, applicationIdentifier,
                           versionExpression=None, icon=None,
-                          launchArguments=None, variant='', 
+                          launchArguments=None, variant='',
                           description=None):
         '''
         Return list of applications found in filesystem matching *expression*.
@@ -290,9 +300,14 @@ class ApplicationLauncher(object):
                 )
             }
 
+#------------------------------------------------------
         # Construct command and environment.
-        command = self._getApplicationLaunchCommand(application, context)
+        # _getApplicationEnvironment modifies application['launchArguments'], which tells connect which file to open
+        # this call must occur before _getApplicationLaunchCommand
         environment = self._getApplicationEnvironment(application, context)
+        # builds actual command
+        command = self._getApplicationLaunchCommand(application, context)
+#------------------------------------------------------
 
         # Environment must contain only strings.
         self._conformEnvironment(environment)
