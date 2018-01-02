@@ -63,16 +63,6 @@ class ApplicationStore(object):
             __name__ + '.' + self.__class__.__name__
         )
 
-#-----------------------------------------------
-        # our custom ftrack wrapper
-        if not hasattr(self, 'arkFt'):
-            try:
-                from arkFTrack import arkFt
-                self.arkFt = arkFt.ArkFt()
-            except:
-                pass
-#-----------------------------------------------
-
         # Discover applications and store.
         self.applications = self._discoverApplications()
 
