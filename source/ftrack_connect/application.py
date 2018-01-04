@@ -16,6 +16,9 @@ import ftrack_api
 
 import ftrack_connect.session
 
+import settingsManager
+globalSettings = settingsManager.globalSettings()
+
 #: Default expression to match version component of executable path.
 #: Will match last set of numbers in string where numbers may contain a digit
 #: followed by zero or more digits, periods, or the letters 'a', 'b', 'c' or 'v'
@@ -245,6 +248,8 @@ class ApplicationLauncher(object):
 
     '''
 
+    launchTask = "{}/arkFTrack/arkFt/launchTask.py".format(globalSettings.ARK_ROOT)
+
     def __init__(self, applicationStore):
         '''Instantiate launcher with *applicationStore* of applications.
 
@@ -290,14 +295,9 @@ class ApplicationLauncher(object):
                 )
             }
 
-#------------------------------------------------------
         # Construct command and environment.
-        # _getApplicationEnvironment modifies application['launchArguments'], which tells connect which file to open
-        # this call must occur before _getApplicationLaunchCommand
-        environment = self._getApplicationEnvironment(application, context)
-        # builds actual command
         command = self._getApplicationLaunchCommand(application, context)
-#------------------------------------------------------
+        environment = self._getApplicationEnvironment(application, context)
 
         # Environment must contain only strings.
         self._conformEnvironment(environment)
@@ -355,6 +355,16 @@ class ApplicationLauncher(object):
             self.logger.debug(
                 'Launching {0} with options {1}'.format(command, options)
             )
+
+            #------------------------------------------------------
+            # rather than launching program directly, launch python task launcher
+            command = [
+                globalSettings.get('PYTHON_EXE'),
+                self.launchTask,
+                environment['FTRACK_TASKID'],
+                application['path']]
+            #------------------------------------------------------
+
             process = subprocess.Popen(command, **options)
 
         except (OSError, TypeError):
@@ -467,7 +477,10 @@ class ApplicationLauncher(object):
         environment = os.environ.copy()
 
         environment.pop('PYTHONHOME', None)
-        environment.pop('FTRACK_EVENT_PLUGIN_PATH', None)
+        #------------------------------------------------------
+        # moved this to launchTask.py
+        # environment.pop('FTRACK_EVENT_PLUGIN_PATH', None)
+        #------------------------------------------------------
 
         # Add FTRACK_EVENT_SERVER variable.
         environment = prependPath(
