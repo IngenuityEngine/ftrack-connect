@@ -248,7 +248,8 @@ class ApplicationLauncher(object):
 
     '''
 
-    launchTask = "{}/arkFTrack/arkFt/launchTask.py".format(globalSettings.ARK_ROOT)
+    import arkFTrack
+    launchTask = arkFTrack.arkFt.launchTask.__file__
 
     def __init__(self, applicationStore):
         '''Instantiate launcher with *applicationStore* of applications.
@@ -359,7 +360,7 @@ class ApplicationLauncher(object):
             #------------------------------------------------------
             # rather than launching program directly, launch python task launcher
             command = [
-                globalSettings.get('PYTHON_EXE'),
+                os.getenv('ARK_PYTHON'),
                 self.launchTask,
                 environment['FTRACK_TASKID'],
                 application['path']]
@@ -478,7 +479,7 @@ class ApplicationLauncher(object):
 
         environment.pop('PYTHONHOME', None)
         #------------------------------------------------------
-        # moved this to launchTask.py
+        # environment variable set in setup.py
         # environment.pop('FTRACK_EVENT_PLUGIN_PATH', None)
         #------------------------------------------------------
 
