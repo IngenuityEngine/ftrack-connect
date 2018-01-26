@@ -364,6 +364,8 @@ class ApplicationLauncher(object):
                 self.launchTask,
                 environment['FTRACK_TASKID'],
                 application['path']]
+            if application.get('launchArguments'):
+                command.extend(application.get('launchArguments'))
             #------------------------------------------------------
 
             process = subprocess.Popen(command, **options)
