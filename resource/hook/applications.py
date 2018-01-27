@@ -1,7 +1,6 @@
 # :coding: utf-8
 # :copyright: Copyright (c) 2014 ftrack
 
-import getpass
 import logging
 
 import ftrack_api
@@ -176,7 +175,7 @@ def register(session, **kw):
 
     session.event_hub.subscribe(
         'topic=ftrack.action.discover and source.user.username={0}'.format(
-            getpass.getuser()
+            session.api_user
         ),
         DiscoverApplicationsHook(applicationStore)
     )
@@ -184,7 +183,7 @@ def register(session, **kw):
     session.event_hub.subscribe(
         'topic=ftrack.action.launch and source.user.username={0} '
         'and data.actionIdentifier={1}'.format(
-            getpass.getuser(), ACTION_IDENTIFIER
+            session.api_user, ACTION_IDENTIFIER
         ),
         LaunchApplicationHook(
             ftrack_connect.application.ApplicationLauncher(
